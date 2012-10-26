@@ -11,13 +11,19 @@ Easy to get started - just clone the project, place the stylesheets/app.css file
  
  Restart your trac instance and you're should be working.
  
+ For a quick start, it's looking good. There is still some stuff to do....but, fully functional.  I started with the
+ chevah / trac-bootstrap-theme and made my initial modifications from there.  Thanks to that project for getting things
+ rolling.
+ 
  
 *Todo*
- -----
+------
  
  * Fix actions menu hover in IE
  * Fix mainnav hover in IE (if move off the link - link color changes)
  * Fix project Hover in all browsers - hover does not fill the entire block element.
+ * Move quickstart box into the actions bar.
+                                
 
 
 **Contirbutors**
