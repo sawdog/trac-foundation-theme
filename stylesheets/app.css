@@ -1,0 +1,83 @@
+/*  ----------------
+ *  TopBar Overrides
+ *  ----------------
+ */
+
+/* project name in the top-bar  - bottom border effects all links in the
+ * top-bar
+ */
+.top-bar :link, .top-bar :visited {
+ text-decoration: none;
+ color: #fff;
+ border-bottom: 0px}
+.top-bar .name :link:hover, .top-bar .name :visited:hover {
+  color: #BB0000}
+.top-bar span > :link, .top-bar span > :visited {
+  font-size: 24px}
+.top-bar ul > li a:not(.button) {
+  color: #BB0000;
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  height: 45px;
+  line-height: 45px;
+  padding: 0 15px;
+}
+
+/* hover for the mainnav in the top-bar */
+.top-bar ul > li:hover, .top-bar ul > li.active {
+  background: #bbb;
+  color: #BB0000;
+ }
+
+/* 'actions' bar - under top-bar */
+.top-bar nav {
+ background-color: white;
+ border-bottom: 5px dotted #bbb;
+ color: #BB0000}
+.top-bar ul > li.has-dropdown a {
+  padding-right: 33.75px; 
+  color: #BB0000;
+}
+
+/* hover for the action titles in the actions bar */
+.top-bar ul > li.has-dropdown a:hover { background: #eee; }
+.top-bar ul > li.has-dropdown .dropdown {
+   background: #fff;
+   left: 0;
+   margin: 0;
+   padding: 9px 0 0 0;
+   position: absolute;
+   visibility: hidden;
+   z-index: 99; 
+}
+
+/* dropdown of the top level action item */
+.top-bar ul > li.has-dropdown .dropdown li a:hover { background: #eee; }
+.top-bar ul > li.has-dropdown .dropdown li {
+   background: #fff;
+   line-height: 1;
+   min-width: 100%;
+   padding-bottom: 5px;
+}
+
+/* for the mainnav items  in the top-bar */
+.top-bar .name .mainnav :link, .top-bar .name .mainnav :visited {
+  padding-right: 10px;
+  color: #fff}
+.top-bar .name .mainnav :link:hover, .top-bar .name .mainnav :visited:hover {
+  background-color: #bbb;
+  color: #BB0000;
+}
+
+/* IE8 Fixes */
+.lt-ie9 .top-bar ul li a { color: #BB0000; display: block; font-weight: bold; font-size: 13px; height: 45px; line-height: 45px; padding: 0 15px; }
+
+/* trac overrides */
+#search {
+  line-height: 1.3;
+  margin-top: 5px;
+  margin-bottom: 25px;
+}
+
+

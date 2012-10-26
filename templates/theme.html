@@ -1,0 +1,196 @@
+<?python
+from genshi.builder import tag
+from genshi.core import QName
+
+TRIM_SIZE = 23
+SIDEBAR_SPAN = 2
+CONTENT_SPAN = 12 - SIDEBAR_SPAN
+
+first_metanav = chrome['nav']['metanav'][0]['label']
+if hasattr(first_metanav, 'children'):
+  user_menu_text = first_metanav.children
+else:
+  user_menu_text = first_metanav
+
+new_ctxtnav = []
+for element in chrome['ctxtnav']:
+  if hasattr(element, 'attrib'):
+    element.attrib = element.attrib | [(QName('class'), 'btn')]
+  else:
+    element = tag.a(element,  class_='btn disabled')
+  new_ctxtnav.append(element)
+chrome['ctxtnav'] = new_ctxtnav
+
+db = perm.env.get_db_cnx()
+cursor = db.cursor()
+cursor.execute(
+  "SELECT id, title FROM report ORDER BY %s" % ('id'))
+all_reports = list(cursor)
+
+sql = (
+  'SELECT name, max(time) AS max_time FROM wiki '
+  'GROUP BY name ORDER BY max_time DESC LIMIT 15'
+  )
+cursor.execute(sql)
+last_wikis = list(cursor)
+
+?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:i18n="http://genshi.edgewall.org/i18n"
+      py:strip="">
+
+  <!--! Add site-specific style sheet -->
+  <head py:match="head" py:attrs="select('@*')">
+    ${select('*|comment()|text()')}
+    <link rel="stylesheet" type="text/css"
+          href="${href.chrome('site/stylesheets/foundation.css')}" />
+    <link rel="stylesheet" type="text/css"
+          href="${href.chrome('site/stylesheets/app.css')}" />
+    <script src="${href.chrome('site/javascripts/modernizr.foundation.js')}"></script>
+    <!-- IE Fix for HTML5 Tags -->
+	<!--[if lt IE 9]>
+    	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+<py:match path="body" once="true" buffer="false">
+  <body class="off-canvas">
+  <div class="container top-bar home-border">
+    <div class="attached">
+      <div class="name" onclick="void(0);">
+        <span><a href="${req.base_url}">${project.name}</a>
+          <a href="#" class="toggle-nav"></a></span>
+      <ul class="right" py:if="chrome.nav['mainnav']">
+        <li class="mainnav" py:for="idx, item in enumerate(chrome.nav['mainnav'])">
+          ${item.label}</li>
+      </ul>
+      </div>
+    </div>
+    <!-- actions bar -->
+    <nav class="top-bar">
+      <ul>
+        <li class="name"><a href="#"></a></li>
+        <li class="toggle-topbar"><a href="#"></a></li>
+      </ul>
+        <ul class="left">
+          <li class="has-dropdown"
+              py:if="chrome.nav['metanav']">
+            <a href="#">${user_menu_text}</a>
+            <ul class="dropdown">
+              <py:for each="idx, item in  enumerate(chrome.nav['metanav'])">
+                <li py:if="str(item.label).startswith('logged') != True"> ${item.label} </li>
+              </py:for>
+	    </ul>
+          </li>
+	</ul>  
+
+        <ul class="left">
+          <li class="has-dropdown">
+            <a href="#">Actions</a>
+            <ul class="dropdown">
+              <li><a href="${href.newticket()}?type=task">Add task</a></li>
+              <li><a href="${href.newticket()}?type=bug">Add bug</a></li>
+            </ul>
+          </li>
+        </ul>
+
+        <ul class="left">
+          <li class="has-dropdown">
+            <a href="#">Tickets</a>
+            <ul class="dropdown">
+              <li py:for="report in all_reports">
+                <a href="${href.report(report[0])}">${report[1]}</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <ul class="left">
+          <li class="has-dropdown">
+            <a href="#">Pages</a>
+            <ul class="dropdown">
+              <li>
+                <a href="${href.wiki('TitleIndex')}">Title Index</a>
+              </li>
+              <li py:for="wiki_page in last_wikis">
+                <a href="${href.wiki(wiki_page[0])}">
+                  <py:if test="len(wiki_page[0]) &lt; TRIM_SIZE + 1">
+                    ${wiki_page[0]}
+                  </py:if>
+                  <py:if test="len(wiki_page[0]) &gt; TRIM_SIZE">
+                    <py:with vars="short_name=wiki_page[0][-22:]">
+                      ...${short_name}
+                    </py:with>
+                  </py:if>
+                </a>
+              </li>
+            </ul>
+          </li>  
+        </ul>
+     </nav>
+   </div>
+
+  <div class="row">
+    <div class="twelve columns">
+      <div class="span${CONTENT_SPAN}">
+            <form id="search" class="three right" action="${href.search()}" method="get">
+              <py:if test="not defined('trac_error_rendering') and 'SEARCH_VIEW' in perm">
+                <input type="text" class="seven search-query"
+                       placeholder="Quick search" id="proj-search" name="q" size="18" accesskey="f" value=""/>
+              </py:if>
+            </form>
+            <xi:include py:if="value_of('resourcepath_template')" href="${resourcepath_template}" />
+            <div id="ctxtnav" class="btn-group pull-right" py:if="chrome.ctxtnav">
+              <ul class="link-list">
+                <li py:if="req.environ['PATH_INFO'].startswith('/wiki')">
+                  <a href="${req.href(req.path_info)}?action=edit">Edit page</a>
+                </li>
+                
+                <li py:for="i, elm in enumerate(chrome.ctxtnav)">$elm</li>
+              </ul>
+            </div>
+
+            <div id="warning" py:if="chrome.warnings" class="system-message">
+              <py:choose test="len(chrome.warnings)">
+                <strong>Warning:</strong>
+                <py:when test="1">${chrome.warnings[0]}</py:when>
+                <py:otherwise><ul><li py:for="warning in chrome.warnings">$warning</li></ul></py:otherwise>
+              </py:choose>
+            </div>
+
+            <div id="notice" py:if="chrome.notices" class="system-message">
+              <py:choose test="len(chrome.notices)">
+                <py:when test="1">${chrome.notices[0]}</py:when>
+                <py:otherwise><ul><li py:for="notice in chrome.notices">$notice</li></ul></py:otherwise>
+              </py:choose>
+            </div>
+            ${select('*|comment()|text()')}
+          </div>
+        </div>
+
+  </div>
+
+  <div class="row">
+    <div class="twelve columns">
+      <div id="footer" xml:lang="en"><hr/>
+        <a id="tracpowered" href="http://trac.edgewall.org/"><img
+          src="${chrome.htdocs_location}trac_logo_mini.png" height="30"
+          width="107" alt="Trac Powered" class="pull-left" /></a>
+        <p class="pull-left" i18n:msg="version">
+          Powered by <strong>Trac ${trac.version}</strong><br />
+        </p>
+        <p class="pull-right">${chrome.footer}</p>
+      </div>
+    </div>
+  </div>
+  <!-- Included JS Files (Compressed) -->
+  <script src="${href.chrome('site/javascripts/foundation.min.js')}"></script>
+  <!-- Initialize JS Plugins -->
+  <script src="${href.chrome('site/javascripts/app.js')}"></script>
+  </body>
+</py:match>
+</html>
