@@ -181,7 +181,8 @@ last_wikis = list(cursor)
           src="${chrome.htdocs_location}trac_logo_mini.png" height="30"
           width="107" alt="Trac Powered" class="pull-left" /></a>
         <p class="pull-left" i18n:msg="version">
-          Powered by <strong>Trac ${trac.version}</strong><br />
+          Powered by <a href="${href.about()}"><strong>Trac ${trac.version}</strong></a><br />
+          By <a href="http://www.edgewall.org/">Edgewall Software</a>.
         </p>
         <p class="pull-right">${chrome.footer}</p>
       </div>
