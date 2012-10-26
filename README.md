@@ -12,8 +12,8 @@ Easy to get started - just clone the project, place the stylesheets/app.css file
  Restart your trac instance and you're should be working.
  
  
- Todo
- ----
+*Todo*
+ -----
  
  * Fix actions menu hover in IE
  * Fix mainnav background in IE
