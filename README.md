@@ -1,7 +1,7 @@
 trac-foundation-theme
 =====================
 
-Trac Theme Based on the Foundation 3.1 front-end framework.  If you enjoy this and want to contribute back please do!
+Trac Theme for adding the Foundation 3.1 front-end framework to your trac environment.
 
 Easy to get started - just clone the project, place the stylesheets/app.css file into trac_env/httpd/stylesheets
  place the templates/theme.html file into your trac_env/templates directory.
@@ -16,7 +16,10 @@ Easy to get started - just clone the project, place the stylesheets/app.css file
  -----
  
  * Fix actions menu hover in IE
- * Fix mainnav background in IE
- * Fix mainnav hover in IE
- * Fix project Hover in all browsers
+ * Fix mainnav hover in IE (if move off the link - link color changes)
+ * Fix project Hover in all browsers - hover does not fill the entire block element.
 
+
+**Contirbutors**
+----------------
+If you enjoy this and want to contribute back please do - all contributions welcome.
